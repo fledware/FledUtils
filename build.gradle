@@ -15,8 +15,8 @@ buildscript {
   }
 }
 
-version = '0.0.1-SNAPSHOT'
-ext.appName = 'FledUtils'
+version = new File('version.txt').text
+group = "com.fledware"
 
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
@@ -76,8 +76,10 @@ publishing {
     }
   }
   publications {
-    maven(MavenPublication) {
-      from components.java
+    gpr(MavenPublication) {
+      groupId project.group
+      artifactId project.name
+      version = project.version
     }
   }
 }
