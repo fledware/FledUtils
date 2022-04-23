@@ -2,23 +2,13 @@
 buildscript {
   ext {
     kotlinVersion="1.6.20"
-    coroutineVersion="1.6.0"
-    ktxVersion="1.10.0-rc1"
-    jacksonVersion="2.13.1"
     junitVersion="5.8.2"
-    slf4jVersion="1.7.35"
-    semver4jVersion="3.1.0"
-    log4jVersion="2.17.0"
-    gdxVersion="1.10.0"
-    eclipseCollectionsVersion="10.4.0"
+    slf4jVersion="1.7.36"
   }
 
   repositories {
     mavenLocal()
     mavenCentral()
-    google()
-    maven { url 'https://plugins.gradle.org/m2/' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -37,22 +27,21 @@ apply plugin: 'maven-publish'
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url 'https://plugins.gradle.org/m2/' }
-  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-  maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-  maven { url 'https://jitpack.io' }
 }
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
   implementation "org.slf4j:slf4j-api:$slf4jVersion"
 
   testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}
+
+java {
+  withSourcesJar()
+  withJavadocJar()
 }
 
 compileJava {
