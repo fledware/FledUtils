@@ -92,6 +92,7 @@ publishing {
         name = project.name
         packaging = "jar"
         description = "A set of utilities common for the fledware code"
+        url = "https://github.com/fledware/FledUtils/"
         licenses {
           license {
             name = 'The Apache License, Version 2.0'
