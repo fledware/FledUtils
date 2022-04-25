@@ -1,5 +1,8 @@
+name: Tests
 on:
-  push: {}
+  push:
+    branches-ignore:
+      - main
 jobs:
   tests:
     runs-on: ubuntu-latest
