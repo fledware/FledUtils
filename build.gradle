@@ -16,12 +16,14 @@ buildscript {
 }
 
 version = new File('version.txt').text
-group = "com.fledware"
+group = "io.fledware"
+def isSnapshot = version.endsWith("SNAPSHOT")
 
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 repositories {
   mavenLocal()
@@ -39,13 +41,15 @@ dependencies {
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
-java {
-  withSourcesJar()
-  withJavadocJar()
-}
-
 compileJava {
   options.incremental = true
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  kotlinOptions {
+    jvmTarget = "17"
+    freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+  }
 }
 
 test {
@@ -57,29 +61,62 @@ test {
   maxHeapSize = "2048m"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-  kotlinOptions {
-    jvmTarget = "11"
-    freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-  }
+java {
+  withSourcesJar()
+  withJavadocJar()
+}
+
+artifacts {
+  archives javadocJar, sourcesJar
 }
 
 publishing {
   repositories {
     maven {
-      name = "GitHubPackages"
-      url = "https://maven.pkg.github.com/fledware/FledUtils"
+      url = isSnapshot ?
+          "https://s01.oss.sonatype.org/content/repositories/snapshots/" :
+          "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
       credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
+        username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+        password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
       }
     }
   }
   publications {
-    gpr(MavenPublication) {
-      groupId project.group
-      artifactId project.name
-      version = project.version
+    maven(MavenPublication) {
+      from components.kotlin
+      artifact sourcesJar
+      artifact javadocJar
+      artifactId = "fledutils"
+      pom {
+        packaging = "jar"
+        description = "A set of utilities common for the fledware code"
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        scm {
+          connection = "scm:git:git@github.com:fledware/fledutils.git"
+          developerConnection = "scm:git:git@github.com:fledware/fledutils.git"
+          url = "https://github.com/fledware/FledUtils/"
+        }
+        developers {
+          developer {
+            id = 'rexfleischer'
+            name = 'Rex Fleischer'
+          }
+        }
+      }
     }
   }
+}
+
+signing {
+  def signingKey = findProperty("signingKey")
+  def signingPassword = findProperty("signingPassword")
+  useInMemoryPgpKeys(signingKey, signingPassword)
+  required { gradle.taskGraph.hasTask("publish") }
+  sign publishing.publications.maven
 }

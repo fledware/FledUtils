@@ -1,7 +1,8 @@
 name: Publish
 on:
-  release:
-    types: [created]
+  push: {}
+#  release:
+#    types: [created]
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -19,5 +20,8 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Publish package
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRHUSERNAME }}
+          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRHPASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNINGKEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNINGPASS }}
         run: ./gradlew publish
