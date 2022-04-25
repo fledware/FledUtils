@@ -89,6 +89,7 @@ publishing {
       artifact javadocJar
       artifactId = "fledutils"
       pom {
+        name = project.name
         packaging = "jar"
         description = "A set of utilities common for the fledware code"
         licenses {
