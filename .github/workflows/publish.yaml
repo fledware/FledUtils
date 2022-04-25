@@ -1,8 +1,8 @@
 name: Publish
 on:
-  push: {}
-#  release:
-#    types: [created]
+  push:
+    branches:
+      - main
 jobs:
   publish:
     runs-on: ubuntu-latest
