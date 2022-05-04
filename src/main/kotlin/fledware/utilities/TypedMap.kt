@@ -78,9 +78,6 @@ inline fun <reified T : Any> TypedMap<Any>.getExactMaybe() = getExactMaybe(T::cl
 
 /**
  * The base implementation for a [TypedMap].
- *
- * Note that the inline methods _can_ be an extension method, but
- * then you'd have to write out the root type for each call...
  */
 abstract class AbstractTypedMap<R : Any> : TypedMap<R> {
   private val cacheEmptyMarker = Any()
@@ -117,7 +114,7 @@ abstract class AbstractTypedMap<R : Any> : TypedMap<R> {
   protected fun <T : Any> findValueOrFillCache(key: KClass<T>): T? {
     val check = cache[key]
     if (check === cacheEmptyMarker) return null
-    if (check != null) check as T
+    if (check != null) return check as T
 
     var resultValue: T? = null
     for (value in data.values) {
@@ -198,11 +195,9 @@ abstract class AbstractMutableTypedMap<R : Any> : AbstractTypedMap<R>(), Mutable
   }
 
   override fun <T : R> remove(key: KClass<T>): T? {
-    val value = findValueOrFillCache(key)
-    if (value != null) {
-      data.remove(value::class)
-      cache.clear()
-    }
+    val value = findValueOrFillCache(key) ?: return null
+    data.remove(value::class)
+    cache.clear()
     return value
   }
 }
