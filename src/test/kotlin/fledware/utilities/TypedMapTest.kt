@@ -11,6 +11,16 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+interface SomeBaseType
+
+abstract class AbstractOfSomeBaseType : SomeBaseType
+
+class ConcreteOfSomeBaseTypeA : AbstractOfSomeBaseType()
+
+class ConcreteOfSomeBaseTypeB : AbstractOfSomeBaseType()
+
+class ConcreteOfSomeBaseTypeC : SomeBaseType
+
 class TypedMapTest {
   companion object {
     @JvmStatic
@@ -20,6 +30,24 @@ class TypedMapTest {
         Arguments.of({ RootDefaultTypedMap<Any>() } as () -> MutableTypedMap<Any>),
         Arguments.of({ RootConcurrentTypedMap<Any>() } as () -> MutableTypedMap<Any>),
     )
+  }
+
+  @ParameterizedTest
+  @MethodSource("getData")
+  fun worksForComplexHierarchy(factory: () -> MutableTypedMap<Any>) {
+    val target = factory()
+    assertNull(target.getMaybe(SomeBaseType::class))
+    assertNull(target.getMaybe(AbstractOfSomeBaseType::class))
+    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeA::class))
+    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeB::class))
+    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeC::class))
+    val aThing = ConcreteOfSomeBaseTypeA()
+    target.put(aThing)
+    assertEquals(aThing, target.getMaybe(SomeBaseType::class))
+    assertEquals(aThing, target.getMaybe(AbstractOfSomeBaseType::class))
+    assertEquals(aThing, target.getMaybe(ConcreteOfSomeBaseTypeA::class))
+    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeB::class))
+    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeC::class))
   }
 
   @ParameterizedTest
