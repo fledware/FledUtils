@@ -24,7 +24,7 @@ class HierarchyMapTest {
   @MethodSource("getData")
   fun canReturnNull(factory: () -> MutableHierarchyMap<Any>) {
     val target = factory()
-    assertNull(target.getMaybe(String::class))
+    assertNull(target.getOrNull(String::class))
   }
 
   @ParameterizedTest
@@ -32,7 +32,7 @@ class HierarchyMapTest {
   fun canFindSetValue(factory: () -> MutableHierarchyMap<Any>) {
     val target = factory()
     target.add(String::class)
-    assertNotNull(target.getMaybe<String>())
+    assertNotNull(target.getOrNull<String>())
   }
 
   @ParameterizedTest
@@ -40,7 +40,7 @@ class HierarchyMapTest {
   fun canFindSubclassValue(factory: () -> MutableHierarchyMap<Any>) {
     val target = factory()
     target.add(String::class)
-    assertEquals(String::class, target.getMaybe<CharSequence>())
+    assertEquals(String::class, target.getOrNull<CharSequence>())
   }
 
   @ParameterizedTest
@@ -55,10 +55,10 @@ class HierarchyMapTest {
   fun canRemoveSetValue(factory: () -> MutableHierarchyMap<Any>) {
     val target = factory()
     target.add(String::class)
-    assertEquals(String::class, target.getMaybe(String::class))
+    assertEquals(String::class, target.getOrNull(String::class))
     assertEquals(1, target.size)
     target.remove(String::class)
-    assertNull(target.getMaybe(String::class))
+    assertNull(target.getOrNull(String::class))
     assertEquals(0, target.size)
   }
 
@@ -67,13 +67,13 @@ class HierarchyMapTest {
   fun canRemoveSetSubclassValue(factory: () -> MutableHierarchyMap<Any>) {
     val target = factory()
     target.add(String::class)
-    assertEquals(String::class, target.getMaybe(CharSequence::class))
-    assertEquals(String::class, target.getMaybe(String::class))
+    assertEquals(String::class, target.getOrNull(CharSequence::class))
+    assertEquals(String::class, target.getOrNull(String::class))
     assertEquals(1, target.size)
     assertEquals(2, target.cacheCount)
     target.remove(CharSequence::class)
-    assertNull(target.getMaybe(String::class))
-    assertNull(target.getMaybe(CharSequence::class))
+    assertNull(target.getOrNull(String::class))
+    assertNull(target.getOrNull(CharSequence::class))
     assertEquals(0, target.size)
     assertEquals(2, target.cacheCount)
   }

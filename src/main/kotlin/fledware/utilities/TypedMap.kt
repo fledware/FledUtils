@@ -46,7 +46,7 @@ interface TypedMap<R : Any> {
    * @throws IllegalStateException if multiple values are instances of [key]
    * @return the value that implements [key]
    */
-  fun <T : R> getMaybe(key: KClass<T>): T?
+  fun <T : R> getOrNull(key: KClass<T>): T?
 
   /**
    * Searches for the exact type. This will not do any instance
@@ -65,16 +65,16 @@ interface TypedMap<R : Any> {
    * @param key the key check for
    * @return the value that is the [key] type
    */
-  fun <T : R> getExactMaybe(key: KClass<T>): T?
+  fun <T : R> getExactOrNull(key: KClass<T>): T?
 }
 
 inline fun <reified T : Any> TypedMap<Any>.get() = get(T::class)
 
-inline fun <reified T : Any> TypedMap<Any>.getMaybe() = getMaybe(T::class)
+inline fun <reified T : Any> TypedMap<Any>.getOrNull() = getOrNull(T::class)
 
 inline fun <reified T : Any> TypedMap<Any>.getExact() = getExact(T::class)
 
-inline fun <reified T : Any> TypedMap<Any>.getExactMaybe() = getExactMaybe(T::class)
+inline fun <reified T : Any> TypedMap<Any>.getExactOrNull() = getExactOrNull(T::class)
 
 /**
  * The base implementation for a [TypedMap].
@@ -94,21 +94,21 @@ abstract class AbstractTypedMap<R : Any> : TypedMap<R> {
 
   override val values: Collection<R> get() = data.values
 
-  override operator fun <T : R>  contains(key: KClass<T>): Boolean = getMaybe(key) != null
+  override operator fun <T : R>  contains(key: KClass<T>): Boolean = getOrNull(key) != null
 
   override operator fun <T : R> get(key: KClass<T>): T =
-      getMaybe(key) ?: throw IllegalStateException("key not found: $key")
+      getOrNull(key) ?: throw IllegalStateException("key not found: $key")
 
   @Suppress("UNCHECKED_CAST")
   override fun <T : R> getExact(key: KClass<T>): T =
       data[key] as? T ?: throw IllegalStateException("key not found: $key")
 
   @Suppress("UNCHECKED_CAST")
-  override fun <T : R> getExactMaybe(key: KClass<T>): T? =
+  override fun <T : R> getExactOrNull(key: KClass<T>): T? =
       data[key] as? T
 
   @Suppress("UNCHECKED_CAST")
-  override fun <T : R> getMaybe(key: KClass<T>): T? = findValueOrFillCache(key)
+  override fun <T : R> getOrNull(key: KClass<T>): T? = findValueOrFillCache(key)
 
   @Suppress("UNCHECKED_CAST")
   protected fun <T : Any> findValueOrFillCache(key: KClass<T>): T? {
