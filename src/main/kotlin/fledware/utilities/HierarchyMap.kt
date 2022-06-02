@@ -44,12 +44,12 @@ interface HierarchyMap<R : Any> {
    * @throws IllegalStateException if multiple values are instances of [key]
    * @return the value that implements [key]
    */
-  fun <T : R> getMaybe(key: KClass<T>): KClass<out T>?
+  fun <T : R> getOrNull(key: KClass<T>): KClass<out T>?
 }
 
 inline fun <reified T : Any> HierarchyMap<Any>.get() = get(T::class)
 
-inline fun <reified T : Any> HierarchyMap<Any>.getMaybe() = getMaybe(T::class)
+inline fun <reified T : Any> HierarchyMap<Any>.getOrNull() = getOrNull(T::class)
 
 /**
  * The base implementation for a [HierarchyMap].
@@ -65,13 +65,13 @@ abstract class AbstractHierarchyMap<R : Any> : HierarchyMap<R> {
 
   override val values: Collection<KClass<out R>> get() = data
 
-  override operator fun contains(key: KClass<out R>): Boolean = getMaybe(key) != null
+  override operator fun contains(key: KClass<out R>): Boolean = getOrNull(key) != null
 
   override operator fun <T : R> get(key: KClass<T>): KClass<out T> =
-      getMaybe(key) ?: throw IllegalStateException("key not found: $key")
+      getOrNull(key) ?: throw IllegalStateException("key not found: $key")
 
   @Suppress("UNCHECKED_CAST")
-  override fun <T : R> getMaybe(key: KClass<T>): KClass<out T>? = findValueOrFillCache(key)
+  override fun <T : R> getOrNull(key: KClass<T>): KClass<out T>? = findValueOrFillCache(key)
 
   @Suppress("UNCHECKED_CAST")
   protected fun <T : R> findValueOrFillCache(key: KClass<T>): KClass<out T>? {

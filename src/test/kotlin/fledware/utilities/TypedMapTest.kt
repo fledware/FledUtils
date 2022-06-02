@@ -36,25 +36,25 @@ class TypedMapTest {
   @MethodSource("getData")
   fun worksForComplexHierarchy(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
-    assertNull(target.getMaybe(SomeBaseType::class))
-    assertNull(target.getMaybe(AbstractOfSomeBaseType::class))
-    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeA::class))
-    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeB::class))
-    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeC::class))
+    assertNull(target.getOrNull(SomeBaseType::class))
+    assertNull(target.getOrNull(AbstractOfSomeBaseType::class))
+    assertNull(target.getOrNull(ConcreteOfSomeBaseTypeA::class))
+    assertNull(target.getOrNull(ConcreteOfSomeBaseTypeB::class))
+    assertNull(target.getOrNull(ConcreteOfSomeBaseTypeC::class))
     val aThing = ConcreteOfSomeBaseTypeA()
     target.put(aThing)
-    assertEquals(aThing, target.getMaybe(SomeBaseType::class))
-    assertEquals(aThing, target.getMaybe(AbstractOfSomeBaseType::class))
-    assertEquals(aThing, target.getMaybe(ConcreteOfSomeBaseTypeA::class))
-    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeB::class))
-    assertNull(target.getMaybe(ConcreteOfSomeBaseTypeC::class))
+    assertEquals(aThing, target.getOrNull(SomeBaseType::class))
+    assertEquals(aThing, target.getOrNull(AbstractOfSomeBaseType::class))
+    assertEquals(aThing, target.getOrNull(ConcreteOfSomeBaseTypeA::class))
+    assertNull(target.getOrNull(ConcreteOfSomeBaseTypeB::class))
+    assertNull(target.getOrNull(ConcreteOfSomeBaseTypeC::class))
   }
 
   @ParameterizedTest
   @MethodSource("getData")
   fun canReturnNull(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
-    assertNull(target.getMaybe(String::class))
+    assertNull(target.getOrNull(String::class))
   }
 
   @ParameterizedTest
@@ -62,7 +62,7 @@ class TypedMapTest {
   fun canFindSetValue(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
     target.put("hello")
-    assertEquals("hello", target.getMaybe(String::class))
+    assertEquals("hello", target.getOrNull(String::class))
   }
 
   @ParameterizedTest
@@ -70,7 +70,7 @@ class TypedMapTest {
   fun canFindSubclassValue(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
     target.put("hello")
-    assertEquals("hello", target.getMaybe(CharSequence::class))
+    assertEquals("hello", target.getOrNull(CharSequence::class))
   }
 
   @ParameterizedTest
@@ -85,10 +85,10 @@ class TypedMapTest {
   fun canRemoveSetValue(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
     target.put("hello")
-    assertNotNull(target.getMaybe(String::class))
+    assertNotNull(target.getOrNull(String::class))
     assertEquals(1, target.size)
     target.remove(String::class)
-    assertNull(target.getMaybe(String::class))
+    assertNull(target.getOrNull(String::class))
     assertEquals(0, target.size)
   }
 
@@ -97,10 +97,10 @@ class TypedMapTest {
   fun canRemoveSetSubclassValue(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
     target.put("hello")
-    assertNotNull(target.getMaybe(String::class))
+    assertNotNull(target.getOrNull(String::class))
     assertEquals(1, target.size)
     target.remove(CharSequence::class)
-    assertNull(target.getMaybe(String::class))
+    assertNull(target.getOrNull(String::class))
     assertEquals(0, target.size)
   }
 
