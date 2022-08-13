@@ -38,6 +38,7 @@ class GlobMatchTest {
     assertTrue(regex.matches("hellk/world.json"))
     assertTrue(regex.matches("hello/world/lala.txt"))
     assertTrue(regex.matches("hellk/world/lala.txt"))
+    assertFalse(regex.matches("hellok/world/lala.txt"))
     assertFalse(regex.matches("hello/world/lala.ok"))
     assertFalse(regex.matches("hellk/world/lala.ok"))
   }
