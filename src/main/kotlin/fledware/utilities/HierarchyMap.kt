@@ -70,7 +70,6 @@ abstract class AbstractHierarchyMap<R : Any> : HierarchyMap<R> {
   override operator fun <T : R> get(key: KClass<T>): KClass<out T> =
       getOrNull(key) ?: throw IllegalStateException("key not found: $key")
 
-  @Suppress("UNCHECKED_CAST")
   override fun <T : R> getOrNull(key: KClass<T>): KClass<out T>? = findValueOrFillCache(key)
 
   @Suppress("UNCHECKED_CAST")
