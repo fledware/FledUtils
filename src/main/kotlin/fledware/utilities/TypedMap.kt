@@ -107,7 +107,6 @@ abstract class AbstractTypedMap<R : Any> : TypedMap<R> {
   override fun <T : R> getExactOrNull(key: KClass<T>): T? =
       data[key] as? T
 
-  @Suppress("UNCHECKED_CAST")
   override fun <T : R> getOrNull(key: KClass<T>): T? = findValueOrFillCache(key)
 
   @Suppress("UNCHECKED_CAST")

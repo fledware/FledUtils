@@ -101,6 +101,7 @@ class TypedMapTest {
     assertEquals(1, target.size)
     target.remove(CharSequence::class)
     assertNull(target.getOrNull(String::class))
+    assertNull(target.getOrNull<String>())
     assertEquals(0, target.size)
   }
 
@@ -138,6 +139,28 @@ class TypedMapTest {
     assertEquals(0, target.cacheCount)
     assertFalse(String::class in target)
     assertEquals(1, target.cacheCount)
+  }
+
+  @ParameterizedTest
+  @MethodSource("getData")
+  fun getExact(factory: () -> MutableTypedMap<Any>) {
+    val target = factory()
+    assertNull(target.getExactOrNull<String>())
+    assertNull(target.getExactOrNull<CharSequence>())
+    target.put("hello")
+    assertNotNull(target.getExactOrNull<String>())
+    assertNull(target.getExactOrNull<CharSequence>())
+  }
+
+  @ParameterizedTest
+  @MethodSource("getData")
+  fun getExactThrowsCorrectly(factory: () -> MutableTypedMap<Any>) {
+    val target = factory()
+    assertFailsWith<IllegalStateException> { target.getExact<String>() }
+    assertFailsWith<IllegalStateException> { target.getExact<CharSequence>() }
+    target.put("hello")
+    assertFailsWith<IllegalStateException> { target.getExact<CharSequence>() }
+    assertEquals("hello", target.getExact())
   }
 
   @Test

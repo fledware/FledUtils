@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package fledware.utilities
 
 import org.slf4j.Logger
