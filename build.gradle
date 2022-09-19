@@ -4,7 +4,7 @@ buildscript {
     kotlinVersion="1.7.10"
     junitVersion="5.9.0"
     slf4jVersion="1.7.36"
-    log4jVersion="2.18.0"
+    log4jVersion="2.19.0"
   }
 
   repositories {
