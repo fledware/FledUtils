@@ -130,6 +130,21 @@ class TypedMapTest {
 
   @ParameterizedTest
   @MethodSource("getData")
+  fun canGetOrPutWhenExists(factory: () -> MutableTypedMap<Any>) {
+    val target = factory()
+    target.put("yea yea yea")
+    assertEquals("yea yea yea", target.getOrPut(CharSequence::class) { "no no no" })
+  }
+
+  @ParameterizedTest
+  @MethodSource("getData")
+  fun canGetOrPutWhenDoesntExists(factory: () -> MutableTypedMap<Any>) {
+    val target = factory()
+    assertEquals("no no no", target.getOrPut(CharSequence::class) { "no no no" })
+  }
+
+  @ParameterizedTest
+  @MethodSource("getData")
   fun cachesCorrectly(factory: () -> MutableTypedMap<Any>) {
     val target = factory()
     assertEquals(0, target.cacheCount)
