@@ -39,7 +39,7 @@ interface TypedMap<R : Any> {
   /**
    * Get the first value that is an instance of [key]. If there
    * are multiple values that are instances of [key], an exception
-   * is thrown.
+   * is thrown. Returns null if no value in instance of [key].
    *
    * @param key the key to search for
    * @throws IllegalStateException if there are no values that extend [key]
@@ -94,7 +94,7 @@ abstract class AbstractTypedMap<R : Any> : TypedMap<R> {
 
   override val values: Collection<R> get() = data.values
 
-  override operator fun <T : R>  contains(key: KClass<T>): Boolean = getOrNull(key) != null
+  override operator fun <T : R> contains(key: KClass<T>): Boolean = getOrNull(key) != null
 
   override operator fun <T : R> get(key: KClass<T>): T =
       getOrNull(key) ?: throw IllegalStateException("key not found: $key")
@@ -144,6 +144,20 @@ interface MutableTypedMap<R : Any> : TypedMap<R> {
   fun <T : R> put(value: T): T?
 
   /**
+   * gets the value or puts if not available.
+   *
+   * there is a chance that there could be double inserts
+   * if this method is called frequently. Make sure the
+   * value from [block] can be worked on lazily and won't
+   * break things if multiple puts happen.
+   *
+   * Basically, this is not an atomic operation and there
+   * is a chance the returned value may have been replaced
+   * by the time this method returns.
+   */
+  fun <T : R> getOrPut(key: KClass<T>, block: () -> T): T
+
+  /**
    * Adds the new value, but if the value already exists, throws
    * and exception.
    *
@@ -180,6 +194,13 @@ abstract class AbstractMutableTypedMap<R : Any> : AbstractTypedMap<R>(), Mutable
     cache.clear()
     @Suppress("UNCHECKED_CAST")
     return result as T?
+  }
+
+  override fun <T : R> getOrPut(key: KClass<T>, block: () -> T): T {
+    val check = getOrNull(key)
+    if (check != null) return check
+    put(block())
+    return get(key)
   }
 
   override fun <T : R> add(value: T) {
